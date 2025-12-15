@@ -1,0 +1,19 @@
+project:
+  name: fertilizer_recommender
+  seed: 42
+
+paths:
+  data_raw_dir: data/raw
+  artifacts_dir: artifacts
+  models_dir: artifacts/models
+  reports_dir: artifacts/reports
+
+data:
+  train_file: train.csv
+  test_file: test.csv
+  target_col: "Fertilizer Name"
+  id_col: "id"
+
+training:
+  n_splits: 5
+  top_k: 3
