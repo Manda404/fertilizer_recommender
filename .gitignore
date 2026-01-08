@@ -3,3 +3,5 @@ dev
 data
 logs
 __pycache__/
+poetry.lock
+*.lock

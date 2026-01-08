@@ -1,75 +1,57 @@
-"""
-mlflow_setup.py
-===============
-
-Configuration technique pure de MLflow.
-
-📌 Rôle
--------
-- Lire les variables d’environnement
-- Configurer le tracking URI
-- Normaliser l’URI des artefacts
-- Initialiser le client MLflow
-
-⚠️ Aucun concept métier ici.
-⚠️ Aucun port.
-"""
-"""
-DOCTRINE — MLFLOW SETUP (INFRASTRUCTURE)
-=======================================
-
-RÔLE ARCHITECTURAL
-------------------
-Ce fichier appartient à la couche INFRASTRUCTURE.
-
-Il est responsable UNIQUEMENT de la configuration technique
-de MLflow à partir de l’environnement système.
-
-RESPONSABILITÉ UNIQUE
----------------------
-- Lire les variables d’environnement
-- Configurer le tracking URI
-- Normaliser l’artifact location
-- Initialiser le client MLflow
-
-INTERDICTIONS ABSOLUES
----------------------
-- Aucune logique métier
-- Aucune décision fonctionnelle
-- Aucun appel aux use cases
-- Aucune dépendance vers le domaine ou l’application
-"""
+# infrastructure/tracking/mlflow_setup.py
 
 import os
+
 import mlflow
+from loguru import logger
+from fertilizer_recommender.infrastructure.utils.exceptions import (
+    MLflowConfigurationError,
+    MLflowSetupError,
+)
 from mlflow.tracking import MlflowClient
 
 
 class MLflowConfigurator:
     """
-    Configure MLflow à partir des variables d’environnement.
+    Initialise MLflow à partir de l'environnement système.
+
+    - Vérifie la configuration requise.
+    - Configure l'URI de tracking et l'URI des artefacts.
+    - Vérifie l'accès au backend MLflow.
     """
 
     def __init__(self):
-        self.tracking_uri = os.environ.get("MLFLOW_TRACKING_URI")
-        self.artifact_uri = os.environ.get("MLFLOW_ARTIFACT_URI")
+        self.logger = logger
 
-        if not self.tracking_uri:
-            raise ValueError("MLFLOW_TRACKING_URI manquant.")
-        if not self.artifact_uri:
-            raise ValueError("MLFLOW_ARTIFACT_URI manquant.")
+        self.tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
+        self.artifact_uri = os.getenv("MLFLOW_ARTIFACT_URI")
+
+        if not self.tracking_uri or not self.artifact_uri:
+            missing = ", ".join(
+                var for var in ["MLFLOW_TRACKING_URI", "MLFLOW_ARTIFACT_URI"]
+                if not os.getenv(var)
+            )
+            raise MLflowConfigurationError(f"Variables d'environnement manquantes : {missing}")
+
+        self.logger.debug(f"Tracking URI : {self.tracking_uri}")
+        self.logger.debug(f"Artifact URI : {self.artifact_uri}")
 
     def configure(self) -> tuple[MlflowClient, str]:
-        """
-        Configure MLflow et retourne :
-        - le client MLflow
-        - l'artifact_location normalisée
-        """
-        mlflow.set_tracking_uri(self.tracking_uri)
+        """Configure MLflow et retourne le client + l'URI normalisée des artefacts."""
+        try:
+            mlflow.set_tracking_uri(self.tracking_uri)
 
-        artifact_uri = self.artifact_uri
-        if not artifact_uri.startswith(("file:", "http", "s3", "gs")):
-            artifact_uri = f"file:{os.path.abspath(artifact_uri)}"
+            artifact_uri = (
+                self.artifact_uri
+                if self.artifact_uri.startswith(("file:", "http", "s3", "gs"))
+                else f"file:{os.path.abspath(self.artifact_uri)}"
+            )
 
-        client = MlflowClient(tracking_uri=self.tracking_uri)
-        return client, artifact_uri
+            client = MlflowClient(self.tracking_uri)
+            client.search_experiments()  # test connexion
+
+            self.logger.info("MLflow configuré avec succès.")
+            return client, artifact_uri
+
+        except Exception as exc:
+            raise MLflowSetupError("Échec d'initialisation MLflow.") from exc

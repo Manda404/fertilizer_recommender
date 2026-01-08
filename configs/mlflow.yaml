@@ -1,0 +1,6 @@
+mlflow:
+  tracking_uri: "file:./mlruns"
+  experiment_name: "fertilizer_recommender"
+  tags:
+    project: "fertilizer_recommender"
+    stage: "cv"
