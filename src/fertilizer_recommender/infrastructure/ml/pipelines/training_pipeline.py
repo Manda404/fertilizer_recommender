@@ -10,7 +10,7 @@ Pourquoi ce fichier existe ?
 - Faciliter le swap de modèles plus tard.
 
 Est-ce critique ?
-✅ OUI. C’est la brique ML centrale.
+OUI. C’est la brique ML centrale.
 """
 
 from __future__ import annotations

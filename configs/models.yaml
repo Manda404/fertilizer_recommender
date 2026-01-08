@@ -1,0 +1,25 @@
+catboost:
+  iterations: 600
+  depth: 8
+  learning_rate: 0.05
+  random_state: 42
+  loss_function: MultiClass
+  verbose: 100
+
+lightgbm:
+  n_estimators: 800
+  learning_rate: 0.05
+  num_leaves: 64
+  random_state: 42
+  objective: multiclass
+
+xgboost:
+  n_estimators: 600
+  max_depth: 8
+  learning_rate: 0.05
+  subsample: 0.8
+  colsample_bytree: 0.8
+  use_label_encoder: False
+  random_state: 42
+  objective: multi:softprob
+  eval_metric: mlogloss
