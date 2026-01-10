@@ -107,7 +107,7 @@ class TrainWithCVUseCase:
                     f"[Fold {fold}] Score MAP@{self.top_k} = {score:.4f}"
                 )
                 self.experiment_service.log_evaluation(
-                    {f"map_{self.top_k}_fold": score}
+                    {f"map_{self.top_k}_fold{fold}": score}
                 )
 
             mean_score = float(np.mean(fold_scores)) if fold_scores else 0.0

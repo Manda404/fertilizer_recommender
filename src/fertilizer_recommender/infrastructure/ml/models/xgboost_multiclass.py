@@ -20,11 +20,11 @@ import xgboost as xgb
 class XGBoostMulticlass:
     def __init__(
         self,
-        num_class: int,
+        #num_class: int,
         **kwargs,
     ):
         self.model = xgb.XGBClassifier(
-            num_class=num_class,
+            #num_class=num_class,
             **kwargs,
         )
 

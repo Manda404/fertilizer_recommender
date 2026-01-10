@@ -1,25 +1,141 @@
 catboost:
+  # =====================
+  # Core parameters
+  # =====================
   iterations: 600
   depth: 8
   learning_rate: 0.05
-  random_state: 42
   loss_function: MultiClass
+  eval_metric: MultiClass
+  random_seed: 42
   verbose: 100
 
+  # =====================
+  # Categorical features
+  # =====================
+  #cat_features:
+  #  - Soil Type
+  #  - Crop Type
+
+  # =====================
+  # Regularization
+  # =====================
+  l2_leaf_reg: 5
+  min_data_in_leaf: 40
+
+  # =====================
+  # Sampling
+  # =====================
+  #bootstrap_type: Bayesian
+  #bagging_temperature: 1.0
+  #subsample: 0.8
+
+  # =====================
+  # Overfitting control
+  # =====================
+  #od_type: Iter
+  #od_wait: 50
+  #early_stopping_rounds: 50
+
+  # =====================
+  # Class imbalance
+  # =====================
+  auto_class_weights: Balanced
+
+  # =====================
+  # Performance
+  # =====================
+  task_type: CPU
+  thread_count: -1
+
+
+# =========================================================
+
+
 lightgbm:
+  # =====================
+  # Core parameters
+  # =====================
   n_estimators: 800
   learning_rate: 0.05
-  num_leaves: 64
-  random_state: 42
   objective: multiclass
+  num_class: 7
+  random_state: 42
+  verbosity: -1
+  force_col_wise: true
+
+  # =====================
+  # Categorical features
+  # =====================
+  #categorical_feature:
+  #  - Soil Type
+  #  - Crop Type
+
+  # =====================
+  # Tree structure
+  # =====================
+  num_leaves: 64
+  max_depth: -1
+  min_data_in_leaf: 40
+
+  # =====================
+  # Sampling
+  # =====================
+  subsample: 0.8
+  subsample_freq: 1
+  colsample_bytree: 0.8
+
+  # =====================
+  # Regularization
+  # =====================
+  lambda_l1: 0.0
+  lambda_l2: 1.0
+  min_gain_to_split: 0.0
+
+  # =====================
+  # Class imbalance
+  # =====================
+  class_weight: balanced
+
+
+# =========================================================
+
 
 xgboost:
+  # =====================
+  # Core parameters
+  # =====================
   n_estimators: 600
   max_depth: 8
   learning_rate: 0.05
+  objective: multi:softprob
+  num_class: 7
+  eval_metric: mlogloss
+  random_state: 42
+  tree_method: hist
+  verbosity: 1
+
+  # =====================
+  # Sampling
+  # =====================
   subsample: 0.8
   colsample_bytree: 0.8
-  use_label_encoder: False
-  random_state: 42
-  objective: multi:softprob
-  eval_metric: mlogloss
+  colsample_bylevel: 0.8
+
+  # =====================
+  # Regularization
+  # =====================
+  reg_alpha: 0.0
+  reg_lambda: 1.0
+  min_child_weight: 5
+  gamma: 0.0
+
+  # =====================
+  # Overfitting control
+  # =====================
+  #early_stopping_rounds: 50
+
+  # =====================
+  # Performance
+  # =====================
+  n_jobs: -1

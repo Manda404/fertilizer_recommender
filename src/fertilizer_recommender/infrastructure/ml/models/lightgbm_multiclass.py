@@ -17,9 +17,8 @@ import lightgbm as lgb
 
 
 class LightGBMMulticlass:
-    def __init__(self, num_class: int, **kwargs):
+    def __init__(self, **kwargs):
         self.model = lgb.LGBMClassifier(
-            num_class=num_class,
             **kwargs,
         )
 
